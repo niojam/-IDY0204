@@ -1,0 +1,94 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="02" author="player1" context="local">
+        <sql>
+            -- TODO remove
+
+            INSERT INTO kahoot.author (id, username, oid)
+            VALUES (-1, 'grant-author', 'abc'),
+                   (-2, 'just author', 'abcdd'),
+                   (-100, 'test_author', 'abcd');
+
+
+            INSERT INTO kahoot.played_quiz (id, name, author_id)
+            VALUES (-1, 'super-quiz', -1);
+
+            INSERT INTO kahoot.quiz (id, name, author_id)
+            VALUES (-1, 'super-quiz', -1);
+
+            INSERT INTO kahoot.question(id, title, text, quiz_id, next_question_id)
+            VALUES (-1, 'super-question', 'qwerty', -1, -2),
+                   (-2, '2+2', 'math question', -1, null);
+
+            INSERT INTO kahoot.played_question(id, title, text, quiz_id, parent_question_id)
+            VALUES (-1, 'super-question', 'qwerty', -1, -1),
+                   (-2, '2+2', 'math question', -1, -2);
+
+            INSERT INTO kahoot.room (id, name, pin, quiz_id, current_question_id, started_at, author_id)
+            VALUES (-1, 'super-room', 'a', -1, -1, NOW(), -1);
+
+            INSERT INTO kahoot.room (id, name, pin, status, quiz_id, current_question_id, started_at, author_id)
+            VALUES (-8, 'mega room', 'aasdf', 'FINISHED', -1, -1, NOW(), -1),
+                   (-9, 'mega room 2', 'affdf', 'FINISHED', -1, -1, NOW(), -1),
+                   (-10, 'mega room 3', 'asaaa', 'FINISHED', -1, -1, NOW(), -2);
+
+            INSERT INTO kahoot.player (id, username, room_id)
+            VALUES (-1, 'player1', -1);
+
+            INSERT INTO kahoot.player (id, username, room_id)
+            VALUES (-2, '', -1);
+
+            INSERT INTO kahoot.player (id, username, room_id)
+            VALUES (-10, 'Jake', -8),
+                   (-11, 'Mike', -8),
+                   (-12, 'Susan', -8),
+                   (-13, 'Anna', -8);
+
+            INSERT INTO kahoot.answer(id, text, question_id, is_correct)
+            VALUES (-1, 'first', -1, TRUE),
+                   (-2, 'second', -1, FALSE),
+                   (-3, 'third', -1, FALSE),
+                   (-4, 'fourth', -1, FALSE),
+                   (-5, '1', -2, TRUE),
+                   (-6, '2', -2, FALSE),
+                   (-7, '3', -2, FALSE),
+                   (-8, '4', -2, FALSE);
+
+            INSERT INTO kahoot.played_answer(id, text, question_id, is_correct, parent_answer_id)
+            VALUES (-1, 'first', -1, TRUE, -1),
+                   (-2, 'second', -1, FALSE, -2),
+                   (-3, 'third', -1, FALSE, -3),
+                   (-4, 'fourth', -1, FALSE, -4),
+                   (-5, '1', -2, TRUE, -5),
+                   (-6, '2', -2, FALSE, -6),
+                   (-7, '3', -2, FALSE, -7),
+                   (-8, '4', -2, FALSE, -8);
+
+            UPDATE kahoot.quiz
+            SET first_question_id = -1
+            WHERE id = -1;
+
+            INSERT INTO kahoot.score(id, correct_answers, wrong_answers, score, player_id, room_id)
+            VALUES (-10, 10, 0, 1000, -10, -8),
+                   (-11, 8, 2, 800, -11, -8),
+                   (-12, 5, 5, 500, -12, -8),
+                   (-13, 9, 1, 800, -13, -8);
+
+            INSERT INTO kahoot.answer_frequency(id, room_id, answer_id, question_id, frequency)
+            VALUES (-10, -8, -1, -1, 20),
+                   (-11, -8, -2, -1, 10),
+                   (-12, -8, -3, -1, 16),
+                   (-13, -8, -4, -1, 5),
+                   (-14, -8, -5, -2, 26),
+                   (-15, -8, -6, -2, 42),
+                   (-16, -8, -7, -2, 30),
+                   (-17, -8, -8, -2, 5);
+
+
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

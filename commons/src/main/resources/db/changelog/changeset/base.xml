@@ -1,0 +1,229 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="01" author="player1">
+        <sql>
+
+            CREATE SCHEMA kahoot;
+            REVOKE ALL ON SCHEMA kahoot FROM PUBLIC;
+            ALTER DEFAULT PRIVILEGES IN SCHEMA kahoot REVOKE ALL ON TABLES FROM PUBLIC;
+
+            CREATE TABLE kahoot.author
+            (
+                id       SERIAL,
+                oid      VARCHAR(200) NOT NULL,
+                username VARCHAR(50)  NOT NULL,
+                CONSTRAINT author_id_pk PRIMARY KEY (id),
+                CONSTRAINT author_oid_unique UNIQUE (oid),
+                CONSTRAINT author_unique_username UNIQUE (id)
+            );
+
+            CREATE TABLE kahoot.image
+            (
+                id           SERIAL,
+                file_name    VARCHAR(200) NOT NULL,
+                content_type VARCHAR(50)  NOT NULL,
+                content      BYTEA        NOT NULL,
+                CONSTRAINT image_id_pk PRIMARY KEY (id)
+            );
+
+            CREATE TABLE kahoot.quiz
+            (
+                id                SERIAL,
+                name              VARCHAR(50),
+                author_id         INTEGER NOT NULL,
+                first_question_id INTEGER,
+                image_id          INTEGER,
+                CONSTRAINT quiz_id_pk PRIMARY KEY (id),
+                CONSTRAINT quiz_author_id_fq FOREIGN KEY (author_id) REFERENCES kahoot.author (id),
+                CONSTRAINT quiz_image_id_fq FOREIGN KEY (image_id) REFERENCES kahoot.image (id)
+            );
+
+            CREATE TABLE kahoot.question_type
+            (
+                name VARCHAR(50),
+                CONSTRAINT question_type_pk PRIMARY KEY (name)
+            );
+
+            INSERT INTO kahoot.question_type(name)
+            VALUES ('SINGLE_MATCH'),
+                   ('SINGLE_ANY'),
+                   ('MULTIPLE_MATCH'),
+                   ('MULTIPLE_ANY');
+
+            CREATE TABLE kahoot.time_algorithm
+            (
+                name VARCHAR(50),
+                CONSTRAINT time_algorithm_pk PRIMARY KEY (name)
+            );
+
+            INSERT INTO kahoot.time_algorithm(name)
+            VALUES ('CONSTANT'),
+                   ('FASTEST_ANSWER');
+
+            CREATE TABLE kahoot.timer
+            (
+                value SMALLINT,
+                CONSTRAINT timer_value_pk PRIMARY KEY (value)
+            );
+
+            INSERT INTO kahoot.timer(value)
+            VALUES (15),
+                   (30),
+                   (45),
+                   (60);
+
+            CREATE TABLE kahoot.question
+            (
+                id               SERIAL,
+                title            VARCHAR(200) NOT NULL,
+                text             VARCHAR(500) NOT NULL,
+                quiz_id          INTEGER      NOT NULL,
+                question_type    VARCHAR(250) NOT NULL DEFAULT 'SINGLE_MATCH',
+                timer            INTEGER      NOT NULL DEFAULT 45,
+                reward           INTEGER      NOT NULL DEFAULT 100,
+                time_algorithm   VARCHAR(50)  NOT NULL DEFAULT 'CONSTANT',
+                next_question_id INTEGER,
+                image_id         INTEGER,
+                CONSTRAINT question_id_pk PRIMARY KEY (id),
+                CONSTRAINT question_quiz_id_fk FOREIGN KEY (quiz_id) REFERENCES kahoot.quiz (id) ON DELETE CASCADE,
+                CONSTRAINT question_next_question_id_fk FOREIGN KEY (next_question_id) REFERENCES kahoot.question (id),
+                CONSTRAINT question_timer_fk FOREIGN KEY (timer) REFERENCES kahoot.timer (value),
+                CONSTRAINT question_question_type_fk FOREIGN KEY (question_type) REFERENCES kahoot.question_type (name),
+                CONSTRAINT question_image_id_fk FOREIGN KEY (image_id) REFERENCES kahoot.image (id),
+                CONSTRAINT question_time_algorithm FOREIGN KEY (time_algorithm) REFERENCES kahoot.time_algorithm (name),
+                CONSTRAINT question_id_not_0 CHECK ( id != 0 )
+            );
+
+            ALTER TABLE kahoot.quiz
+                ADD CONSTRAINT fk_first_question_id FOREIGN KEY (first_question_id)
+                    REFERENCES kahoot.question (id)
+                    ON DELETE SET NULL;
+
+            CREATE TABLE kahoot.played_quiz
+            (
+                id        SERIAL,
+                name      VARCHAR(50) NOT NULL,
+                author_id INTEGER     NOT NULL,
+                CONSTRAINT played_quiz_id_pk PRIMARY KEY (id),
+                CONSTRAINT played_quiz_author_id_fq FOREIGN KEY (author_id) REFERENCES kahoot.author (id) ON DELETE CASCADE
+            );
+
+            CREATE TABLE kahoot.room_status
+            (
+                name VARCHAR(50),
+                CONSTRAINT room_status_pk PRIMARY KEY (name)
+            );
+
+            INSERT INTO kahoot.room_status(name)
+            VALUES ('REGISTERED'),
+                   ('OPEN'),
+                   ('READY'),
+                   ('ANSWERING'),
+                   ('REVIEWING'),
+                   ('FINISHED'),
+                   ('ABORTED');
+
+            CREATE TABLE kahoot.room
+            (
+                id                  SERIAL,
+                pin                 VARCHAR(6),
+                name                VARCHAR(200)                NOT NULL,
+                status              VARCHAR(50)                 NOT NULL DEFAULT 'REGISTERED',
+                current_question_id INTEGER,
+                started_at          TIMESTAMP(0) WITH TIME ZONE NOT NULL,
+                quiz_id             INTEGER,
+                played_quiz_id      INTEGER,
+                author_id           INTEGER                     NOT NULL,
+                CONSTRAINT room_id_pk PRIMARY KEY (id),
+                CONSTRAINT room_status_fk FOREIGN KEY (status) REFERENCES kahoot.room_status (name),
+                CONSTRAINT room_quiz_id_fk FOREIGN KEY (quiz_id) REFERENCES kahoot.quiz (id) ON DELETE CASCADE,
+                CONSTRAINT room_current_question_id_fk FOREIGN KEY (current_question_id) REFERENCES kahoot.question (id) ON DELETE CASCADE,
+                CONSTRAINT quiz_author_id_fq FOREIGN KEY (author_id) REFERENCES kahoot.author (id),
+                CONSTRAINT quiz_played_quid_id_fq FOREIGN KEY (played_quiz_id) REFERENCES kahoot.played_quiz (id) ON DELETE CASCADE
+            );
+
+            CREATE TABLE kahoot.player
+            (
+                id       SERIAL,
+                username VARCHAR(15),
+                room_id  INTEGER NOT NULL,
+                CONSTRAINT player_id_pk PRIMARY KEY (id),
+                CONSTRAINT player_room_id FOREIGN KEY (room_id) REFERENCES kahoot.room (id) ON DELETE CASCADE
+            );
+
+            CREATE TABLE kahoot.answer
+            (
+                id          SERIAL,
+                text        VARCHAR(500) NOT NULL,
+                question_id INTEGER      NOT NULL,
+                is_correct  BOOLEAN      NOT NULL DEFAULT FALSE,
+                CONSTRAINT answer_id_pk PRIMARY KEY (id),
+                CONSTRAINT answer_question_id_fk FOREIGN KEY (question_id) REFERENCES kahoot.question (id) ON DELETE CASCADE
+            );
+
+            CREATE TABLE kahoot.score
+            (
+                id              SERIAL,
+                correct_answers INTEGER,
+                wrong_answers   INTEGER,
+                score           INTEGER NOT NULL,
+                player_id       INTEGER NOT NULL,
+                room_id         INTEGER NOT NULL,
+                CONSTRAINT answer_score_id_pk PRIMARY KEY (id),
+                CONSTRAINT player_id_fk FOREIGN KEY (player_id) REFERENCES kahoot.player (id),
+                CONSTRAINT room_id_fk FOREIGN KEY (room_id) REFERENCES kahoot.room (id) ON DELETE CASCADE,
+                CONSTRAINT room_question_player_unique UNIQUE (room_id, player_id)
+            );
+
+--          Intentionally no fk for parent_question_id in order to avoid conflicts in case of parent quiz deletion
+            CREATE TABLE kahoot.played_question
+            (
+                id                 SERIAL,
+                title              VARCHAR(200) NOT NULL,
+                text               VARCHAR(500) NOT NULL,
+                quiz_id            INTEGER      NOT NULL,
+                parent_question_id INTEGER      NOT NULL,
+                question_type      VARCHAR(250) NOT NULL DEFAULT 'SINGLE_MATCH',
+                timer              INTEGER      NOT NULL DEFAULT 45,
+                reward             INTEGER      NOT NULL DEFAULT 100,
+                time_algorithm     VARCHAR(50)  NOT NULL DEFAULT 'CONSTANT',
+                CONSTRAINT played_question_id_pk PRIMARY KEY (id),
+                CONSTRAINT played_question_quiz_id_fk FOREIGN KEY (quiz_id) REFERENCES kahoot.played_quiz (id) ON DELETE CASCADE,
+                CONSTRAINT played_question_question_type_fk FOREIGN KEY (question_type) REFERENCES kahoot.question_type (name),
+                CONSTRAINT played_question_timer_fk FOREIGN KEY (timer) REFERENCES kahoot.timer (value),
+                CONSTRAINT played_question_time_algorithm FOREIGN KEY (time_algorithm) REFERENCES kahoot.time_algorithm (name)
+            );
+
+--          Intentionally no fk for parent_answer_id in order to avoid conflicts in case of parent quiz deletion
+            CREATE TABLE kahoot.played_answer
+            (
+                id          SERIAL,
+                text        VARCHAR(500) NOT NULL,
+                question_id INTEGER      NOT NULL,
+                is_correct  BOOLEAN      NOT NULL DEFAULT FALSE,
+                parent_answer_id INTEGER NOT NULL,
+                CONSTRAINT played_answer_id_pk PRIMARY KEY (id),
+                CONSTRAINT played_answer_question_id_fk FOREIGN KEY (question_id) REFERENCES kahoot.played_question (id) ON DELETE CASCADE
+            );
+
+            CREATE TABLE kahoot.answer_frequency
+            (
+                id               SERIAL,
+                room_id          INTEGER NOT NULL,
+                answer_id        INTEGER NOT NULL,
+                question_id      INTEGER NOT NULL,
+                frequency        INTEGER NOT NULL,
+                CONSTRAINT answer_frequency_id_pk PRIMARY KEY (id),
+                CONSTRAINT answer_frequency_answer_id_pk UNIQUE (room_id, answer_id),
+                CONSTRAINT answer_frequency_answer_id_fk FOREIGN KEY (answer_id) REFERENCES kahoot.played_answer (id) ON DELETE CASCADE,
+                CONSTRAINT answer_frequency_question_id_fk FOREIGN KEY (question_id) REFERENCES kahoot.played_question (id) ON DELETE CASCADE,
+                CONSTRAINT answer_frequency_room_id FOREIGN KEY (room_id) REFERENCES kahoot.room (id) ON DELETE CASCADE
+            );
+
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

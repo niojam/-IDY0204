@@ -1,0 +1,44 @@
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <appender name="json" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <pattern>
+                    <pattern>
+                        {
+                        "time":"%date{ISO8601}",
+                        "severity":"%level",
+                        "ip":"%X{ip}",
+                        "reqQuery":"%X{reqQuery}",
+                        "sess":"%X{sess}",
+                        "resStatus":"%X{resStatus}",
+                        "reqId":"%X{reqId}",
+                        "msg":"%logger{36} - %msg"
+                        }
+                    </pattern>
+                </pattern>
+                <logstashMarkers/>
+            </providers>
+        </encoder>
+    </appender>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            <charset>utf8</charset>
+        </encoder>
+    </appender>
+
+    <springProfile name="prd">
+        <root level="DEBUG">
+            <appender-ref ref="json" />
+        </root>
+    </springProfile>
+
+    <springProfile name="!prd">
+        <root level="DEBUG">
+            <appender-ref ref="CONSOLE" />
+        </root>
+    </springProfile>
+</configuration>

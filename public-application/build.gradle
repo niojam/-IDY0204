@@ -1,0 +1,30 @@
+group = 'ee.taltech'
+
+dependencies {
+
+	implementation(
+			'org.springframework.boot:spring-boot-starter-validation',
+			'org.springframework.boot:spring-boot-starter-data-jdbc',
+
+			'org.springdoc:springdoc-openapi-webflux-ui:1.4.7',
+
+			"io.jsonwebtoken:jjwt:0.9.1",
+			"org.springframework.cloud:spring-cloud-security:2.2.2.RELEASE",
+			"org.springframework.security:spring-security-oauth2-jose",
+			"org.springframework.security:spring-security-oauth2-resource-server",
+			'org.springframework.security:spring-security-rsocket:5.4.0',
+			'org.springframework.security:spring-security-messaging:5.4.0',
+
+			'org.springframework.boot:spring-boot-starter-webflux',
+			'org.springframework.boot:spring-boot-starter-rsocket:2.3.4.RELEASE',
+			'org.springframework.boot:spring-boot-starter-data-r2dbc',
+			'io.r2dbc:r2dbc-postgresql',
+	)
+
+	testImplementation(
+			'org.testcontainers:junit-jupiter:1.15.2',
+			'org.assertj:assertj-core',
+			'io.projectreactor:reactor-test'
+	)
+
+}

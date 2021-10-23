@@ -1,0 +1,153 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="02" author="Mihail.Smirnov" context="prd">
+        <sql>
+            -- TODO remove
+
+            INSERT INTO kahoot.author (id, username, oid)
+            VALUES (-1, 'grant-author', 'abc');
+
+            INSERT INTO kahoot.quiz (id, name, author_id)
+            VALUES (-1, 'super-quiz', -1);
+
+
+            INSERT INTO kahoot.question(id, title, text, quiz_id, next_question_id)
+            VALUES (-1, 'Project consists of how many individual modules?', '', -1, null);
+
+            INSERT INTO kahoot.answer(id, text, question_id, is_correct)
+            VALUES (-1, '1', -1, FALSE),
+            (-2, '2', -1, FALSE),
+            (-3, '3', -1, FALSE),
+            (-4, '4', -1, TRUE);
+
+            <!-- ______________________________ -->
+
+            INSERT INTO kahoot.question(id, title, text, quiz_id, next_question_id)
+            VALUES (-2, 'What is used for CI/CD?', '', -1, null);
+
+            UPDATE kahoot.question
+            SET next_question_id = -2
+            WHERE id = -1;
+
+            INSERT INTO kahoot.answer(id, text, question_id, is_correct)
+            VALUES (-5, 'Bamboo', -2, FALSE),
+            (-6, 'Jenkins', -2, FALSE),
+            (-7, 'Gitlab', -2, TRUE),
+            (-8, 'CircleCI', -2, FALSE);
+
+            <!-- ______________________________ -->
+
+            INSERT INTO kahoot.question(id, title, text, quiz_id, next_question_id)
+            VALUES (-3, 'Is Docker used in production?', '', -1, null);
+
+            UPDATE kahoot.question
+            SET next_question_id = -3
+            WHERE id = -2;
+
+            INSERT INTO kahoot.answer(id, text, question_id, is_correct)
+            VALUES (-9, 'Yes', -3, TRUE),
+            (-10, 'No', -3, FALSE);
+
+            <!-- ______________________________ -->
+
+            INSERT INTO kahoot.question(id, title, text, quiz_id, next_question_id)
+            VALUES (-4, 'Is design of the website good enough?', '', -1, null);
+
+            UPDATE kahoot.question
+            SET next_question_id = -4
+            WHERE id = -3;
+
+            INSERT INTO kahoot.answer(id, text, question_id, is_correct)
+            VALUES (-11, 'Yes', -4, TRUE),
+            (-12, 'No', -4, TRUE);
+
+            <!-- ______________________________ -->
+
+
+            INSERT INTO kahoot.question(id, title, text, quiz_id, next_question_id)
+            VALUES (-5, 'What js library/framework was used for front?', '', -1, null);
+
+            UPDATE kahoot.question
+            SET next_question_id = -5
+            WHERE id = -4;
+
+            INSERT INTO kahoot.answer(id, text, question_id, is_correct)
+            VALUES (-13, 'Vue', -5, FALSE),
+            (-14, 'React', -5, TRUE),
+            (-15, 'Angular', -5, FALSE);
+
+            <!-- ______________________________ -->
+
+
+            INSERT INTO kahoot.question(id, title, text, quiz_id, next_question_id)
+            VALUES (-6, 'What is the core technology networking relies on?', '', -1, null);
+
+            UPDATE kahoot.question
+            SET next_question_id = -6
+            WHERE id = -5;
+
+            INSERT INTO kahoot.answer(id, text, question_id, is_correct)
+            VALUES (-16, 'RSocket', -6, TRUE),
+            (-17, 'Rest', -6, FALSE),
+            (-18, 'gRPC', -6, FALSE);
+
+            <!-- ______________________________ -->
+
+            INSERT INTO kahoot.question(id, title, text, quiz_id, next_question_id)
+            VALUES (-7, 'What is the website you think we took inpriration in?', '', -1, null);
+
+            UPDATE kahoot.question
+            SET next_question_id = -7
+            WHERE id = -6;
+
+            INSERT INTO kahoot.answer(id, text, question_id, is_correct)
+            VALUES (-19, 'Quotev', -7, FALSE),
+            (-20, 'Sporcle', -7, FALSE),
+            (-21, 'Kahoot', -7, TRUE);
+
+            <!-- ______________________________ -->
+
+
+            INSERT INTO kahoot.question(id, title, text, quiz_id, next_question_id)
+            VALUES (-8, 'How many people were developing this project?', 'I needed a question to show some additional
+            text, so here it is.', -1, null);
+
+            UPDATE kahoot.question
+            SET next_question_id = -8
+            WHERE id = -7;
+
+            INSERT INTO kahoot.answer(id, text, question_id, is_correct)
+            VALUES (-22, '3', -8, FALSE),
+            (-23, '4', -8, FALSE),
+            (-24, '5', -8, FALSE),
+            (-25, '6', -8, TRUE);
+
+            <!-- ______________________________ -->
+
+            INSERT INTO kahoot.question(id, title, text, quiz_id, next_question_id)
+            VALUES (-9, 'How did you like our project our of 4?', '', -1, null);
+
+            UPDATE kahoot.question
+            SET next_question_id = -9
+            WHERE id = -8;
+
+            INSERT INTO kahoot.answer(id, text, question_id, is_correct)
+            VALUES (-26, '4/4', -9, TRUE),
+            (-27, '3/4', -9, FALSE),
+            (-28, '2/4', -9, FALSE),
+            (-29, '1/4', -9, FALSE);
+
+            UPDATE kahoot.quiz
+            SET first_question_id = -1
+            WHERE id = -1;
+
+            INSERT INTO kahoot.room(id, pin, name, status, current_question_id, started_at, quiz_id, author_id)
+            VALUES (-1, '1234', 'room -1 name', 'REGISTERED', -1, NOW(), -1, -1);
+
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
