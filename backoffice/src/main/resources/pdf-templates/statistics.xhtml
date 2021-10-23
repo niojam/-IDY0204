@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>
+            TalTech quiz statistics
+        </title>
+        <link href="statistics.css" rel="stylesheet" type="text/css"/>
+    </head>
+    <body>
+        <div class="header">
+            <img alt="" src="assets/talTech.png" class="header__logo"/>
+        </div>
+        <div class="title-row margin-2x">
+            <div class="title-row__content">
+                <h1>TalTech Quiz Statistics</h1>
+            </div>
+        </div>
+        <div class="container">
+            <div class="margin-2x">
+                <p class="text--small-margin-bottom">
+                    <b>Room name:</b> <span th:text="${roomStatistics.roomName}">Data is missing</span>
+                </p>
+                <p class="text--small-margin-bottom">
+                    <b>Quiz name:</b> <span th:text="${roomStatistics.quizName}">Data is missing</span>
+                </p>
+            </div>
+            <div class="table-title">
+                <h3>
+                    Statistics per player
+                </h3>
+            </div>
+            <table class="margin-2x">
+                <thead>
+                <tr>
+                    <th class="text-align--left">
+                        Name
+                    </th>
+                    <th>
+                        <img src="assets/check.png" alt="check.png" class="icon--x3"/>
+                    </th>
+                    <th>
+                        <img src="assets/close.png" alt="close.png" class="icon--x2"/>
+                    </th>
+                    <th>
+                        Score
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="player: ${roomStatistics.playerStatistics}">
+                    <td th:text="${player.username}"
+                        class="text-align--left">
+                        Data is missing
+                    </td>
+                    <td th:text="${player.correctAnswers}">
+                        Data is missing
+                    </td>
+                    <td th:text="${player.wrongAnswers}">
+                        Data is missing
+                    </td>
+                    <td th:text="${player.score}">
+                        Data is missing
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="table-title">
+                <h3>
+                    Statistics per question
+                </h3>
+            </div>
+            <div th:each="question, iter : ${questionStatistics}">
+                <div>
+                    <h4>
+                        <span th:text="${iter.index + 1} + '. Question'">Data is missing</span>
+                    </h4>
+                    <p>
+                        <b>Question title:</b> <span th:text="${question.questionTitle}">Data is missing</span>
+                    </p>
+                    <p>
+                        <b>Question text:</b> <span th:text="${question.questionText}">Data is missing</span>
+                    </p>
+                </div>
+                <table class="margin-2x">
+                    <thead>
+                    <tr>
+                        <th class="text-align--left">
+                            Answer
+                        </th>
+                        <th>
+                            Correct
+                        </th>
+                        <th>
+                            Frequency
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="answer : ${question.answerFrequencies}">
+                        <td th:text="${answer.answerText}" class="text-align--left">
+                            Data is missing
+                        </td>
+                        <td>
+                            <img th:if="${answer.isCorrect == true}" src="assets/check.png" alt="check.png"
+                                 class="icon--x2"/>
+                            <img th:if="${answer.isCorrect == false}" src="assets/close.png" alt="close.svg"
+                                 class="icon--x1"/>
+                        </td>
+                        <td th:text="${answer.frequency}">
+                            Data is missing
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </body>
+</html>

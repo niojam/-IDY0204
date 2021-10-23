@@ -1,0 +1,77 @@
+div {
+    margin-bottom: 24px;
+}
+
+td {
+    text-align: center;
+    border-top: 1px solid #d3d3d3;
+    padding: 4px;
+}
+
+th {
+    text-align: center;
+    margin: 0;
+    padding: 4px;
+}
+
+table {
+    width: 90%;
+    border-collapse: collapse;
+}
+
+.margin-2x {
+    margin-bottom: 48px
+}
+
+.header {
+    width: 90%;
+    padding: 8px;
+}
+
+.header__logo {
+    height: 50px;
+}
+
+.title-row  {
+    height: 90%;
+}
+
+.title-row__content {
+    text-align: center;
+    width: 200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.table-title {
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+.icon--x1 {
+    height: 12px;
+}
+
+.icon--x2 {
+    height: 16px;
+}
+
+.icon--x3 {
+    height: 20px;
+}
+
+.container {
+    width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.text--small-margin-bottom {
+    margin: 0 0 5px;
+}
+
+.text-align--left {
+    text-align: left;
+}

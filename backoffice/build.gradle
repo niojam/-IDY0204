@@ -1,0 +1,36 @@
+group = 'ee.taltech'
+
+dependencies {
+
+	implementation(
+			// starters
+			'org.springframework.boot:spring-boot-starter',
+			'org.springframework.boot:spring-boot-starter-web',
+			'org.springframework.boot:spring-boot-starter-security',
+			'org.springframework.boot:spring-boot-starter-data-jdbc',
+			'org.springframework.boot:spring-boot-starter-validation',
+
+			// swagger
+			'io.swagger.core.v3:swagger-core',
+			'org.springdoc:springdoc-openapi-ui:1.5.4',
+
+			// security
+			"io.jsonwebtoken:jjwt:0.9.1",
+			'org.springframework.security:spring-security-oauth2-client:5.4.1',
+			'org.springframework.security:spring-security-oauth2-jose:5.4.1',
+			'com.microsoft.azure:azure-active-directory-spring-boot-starter:2.3.5',
+
+			// pdf
+			'org.xhtmlrenderer:flying-saucer-pdf-openpdf:9.1.20',
+			'org.thymeleaf:thymeleaf:3.0.11.RELEASE',
+
+			// Selenium
+			'io.github.bonigarcia:webdrivermanager:4.4.0',
+			'org.seleniumhq.selenium:selenium-java:3.141.59',
+			'io.github.bonigarcia:webdrivermanager:4.4.0',
+			'org.seleniumhq.selenium:selenium-chrome-driver:3.141.59'
+
+	)
+
+
+}
