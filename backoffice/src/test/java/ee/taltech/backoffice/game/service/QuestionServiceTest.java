@@ -195,5 +195,19 @@ public class QuestionServiceTest {
                                 .setIsCorrect(false)))));
     }
 
+    @Test
+    public void testEditQuestionDoesNotExit() {
+        when(questionRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        assertThrows(BadRequest.class, () -> questionService.editQuestion(
+                new QuestionDto()
+                        .setId(100L)
+                        .setAnswers(List.of(new AnswerDto()
+                                .setId(-1L)
+                                .setText("Something")
+                                .setQuestionId(100L)
+                                .setIsCorrect(false)))));
+    }
+
 
 }
