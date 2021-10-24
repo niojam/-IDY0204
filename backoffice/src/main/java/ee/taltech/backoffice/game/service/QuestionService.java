@@ -81,8 +81,20 @@ public class QuestionService {
     }
 
     public QuestionDto editQuestion(QuestionDto questionDto) {
-        return null;
+        questionRepository.save(questionMapper.toEntity(questionDto));
 
+        answerService.getAnswersForQuestion(questionDto.getId()).forEach(answerDto -> {
+            boolean isAnswerDeleted = questionDto.getAnswers()
+                    .stream()
+                    .noneMatch(answer -> answerDto.getId().equals(answer.getId()));
+            if (isAnswerDeleted) {
+                answerService.deleteAnswer(answerDto.getId());
+            }
+        });
+        questionDto.getAnswers().forEach(answerDto -> answerDto.setQuestionId(questionDto.getId()));
+
+        questionDto.setAnswers(answerService.saveAnswers(questionDto.getAnswers()));
+        return questionDto;
     }
 
     public void deleteQuestion(Long id, Long quizId) {
