@@ -89,7 +89,9 @@ public class QuestionService {
     }
 
     public void deleteQuestions(Long quizId) {
-        // Method to test
+        List<Question> questionsToDelete = questionRepository.findByQuizId(quizId);
+        questionsToDelete.forEach(question -> answerService.deleteAnswers(question.getId()));
+        questionRepository.deleteAll(questionsToDelete);
     }
 
     public QuestionDto addQuestion(QuestionDto question, Long quizId) {
