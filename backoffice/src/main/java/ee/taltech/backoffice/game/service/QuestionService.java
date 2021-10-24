@@ -83,6 +83,9 @@ public class QuestionService {
     public QuestionDto editQuestion(QuestionDto questionDto) {
         questionRepository.save(questionMapper.toEntity(questionDto));
 
+        if (!providedAtLeastOneValidAnswer(questionDto.getAnswers())) {
+            throw new BadRequest(BadRequest.Code.INVALID_ARGUMENT_EXCEPTION, "Question type does not match amount of marked answers");
+        }
         answerService.getAnswersForQuestion(questionDto.getId()).forEach(answerDto -> {
             boolean isAnswerDeleted = questionDto.getAnswers()
                     .stream()
