@@ -121,27 +121,6 @@ public class QuestionServiceTest {
                         .setAnswers(answerDtoList)
                         .setQuestionType(QuestionType.SINGLE_MATCH)
         ));
-        List<Question> questions = new ArrayList<>(Arrays.asList(
-                new Question()
-                        .setId(1L)
-                        .setQuizId(1L)
-                        .setText("text")
-                        .setTitle("title")
-                        .setQuestionType(QuestionType.SINGLE_MATCH),
-                new Question()
-                        .setId(2L)
-                        .setQuizId(1L)
-                        .setText("textTwo")
-                        .setTitle("titleTwo")
-                        .setQuestionType(QuestionType.SINGLE_MATCH),
-                new Question()
-                        .setId(3L)
-                        .setQuizId(1L)
-                        .setText("textThree")
-                        .setTitle("titleThree")
-                        .setQuestionType(QuestionType.SINGLE_MATCH)
-        ));
-        when(questionRepository.saveAll(anyList())).thenReturn(questions);
         assertThrows(BadRequest.class, () -> questionService.saveQuestions(questionDtos));
     }
 
