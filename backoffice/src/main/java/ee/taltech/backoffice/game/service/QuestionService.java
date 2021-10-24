@@ -43,7 +43,12 @@ public class QuestionService {
     public List<QuestionDto> saveQuestions(List<QuestionDto> questionDtos) {
         List<Question> questions = questionMapper.toQuestionList(questionDtos);
 
-        // save questions (allow postgres to generate ids)
+        questionDtos.forEach(question -> {
+            if (!providedAtLeastOneValidAnswer(question.getAnswers())) {
+                throw new BadRequest(BadRequest.Code.INVALID_ARGUMENT_EXCEPTION, "Question type does not match amount of marked answers");
+            }
+        });
+
         List<Question> questionsWithIds = StreamSupport
                 .stream(questionRepository.saveAll(questions).spliterator(), false)
                 .collect(Collectors.toList());
@@ -89,5 +94,9 @@ public class QuestionService {
         return null;
     }
 
+    private boolean providedAtLeastOneValidAnswer(List<AnswerDto> answers) {
+        long correctAnswers = answers.stream().filter(AnswerDto::getIsCorrect).count();
+        return correctAnswers >= MIN_CORRECT_ANSWERS_COUNT;
+    }
 
 }
