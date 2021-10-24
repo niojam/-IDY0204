@@ -157,4 +157,18 @@ public class QuestionServiceTest {
                 .deleteAll(questions);
     }
 
+    @Test
+    public void testDeleteQuestions() {
+        List<Question> questions = new ArrayList<>(List.of(
+                new Question().setQuizId(-1L).setId(-1L).setText("text"),
+                new Question().setQuizId(-1L).setId(-2L).setText("text2")
+        ));
+        when(questionRepository.findByQuizId(-1L)).thenReturn(questions);
+        questionService.deleteQuestions(-1L);
+        verify(questionRepository, times(1))
+                .deleteAll(questions);
+    }
+
+
+
 }
