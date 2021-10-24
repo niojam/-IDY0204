@@ -170,5 +170,19 @@ public class QuestionServiceTest {
     }
 
 
+    @Test
+    public void testEditQuestion() {
+        when(questionRepository.findById(anyLong())).thenReturn(Optional.of(new Question().setId(100L)));
+        QuestionDto returnedQuestionDto = questionService.editQuestion(
+                new QuestionDto()
+                        .setId(100L)
+                        .setAnswers(List.of(new AnswerDto()
+                                .setId(-1L)
+                                .setText("Something")
+                                .setQuestionId(100L)
+                                .setIsCorrect(true))));
+        assertThat(returnedQuestionDto.getId()).isEqualTo(100L);
+    }
+
 
 }
