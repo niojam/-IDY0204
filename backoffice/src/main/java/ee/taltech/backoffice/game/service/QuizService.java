@@ -44,7 +44,7 @@ public class QuizService {
     }
 
     public QuizDto createQuiz(QuizDto quizDto, Long userId) {
-        return null;
+       return null; // Mehod to test
     }
 
     public Quiz getQuiz(Long id) {
