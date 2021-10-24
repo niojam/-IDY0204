@@ -41,7 +41,37 @@ public class QuestionService {
 
 
     public List<QuestionDto> saveQuestions(List<QuestionDto> questionDtos) {
-        return null; // Method to test
+        List<Question> questions = questionMapper.toQuestionList(questionDtos);
+
+        // save questions (allow postgres to generate ids)
+        List<Question> questionsWithIds = StreamSupport
+                .stream(questionRepository.saveAll(questions).spliterator(), false)
+                .collect(Collectors.toList());
+
+        questionRepository.saveAll(questionsWithIds);
+        IntStream.range(0, questions.size())
+                .forEach(index -> {
+                    Long questionId = questionsWithIds.get(index).getId();
+                    questionDtos
+                            .get(index)
+                            .getAnswers()
+                            .forEach(answer -> answer.setQuestionId(questionId));
+                });
+        List<AnswerDto> answerDtos = questionDtos.stream().map(QuestionDto::getAnswers)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+
+        List<AnswerDto> savedAnswers = answerService.saveAnswers(answerDtos);
+
+        List<QuestionDto> savedQuestionDtos = questionMapper.toQuestionDtoList(questionsWithIds);
+
+        savedQuestionDtos.forEach(questionDto -> {
+            questionDto.setAnswers(savedAnswers.stream()
+                    .filter(answerDto -> questionDto.getId().equals(answerDto.getQuestionId()))
+                    .collect(Collectors.toList()));
+        });
+
+        return savedQuestionDtos;
 
     }
 
