@@ -34,7 +34,7 @@ public class QuizServiceTest {
 
 
     @Test
-    public void testSaveQuiz() {
+    public void testSaveQuizNoQuestions() {
         QuizDto testQuizDto = new QuizDto().setName("megaquiz").setAuthorId(-1L);
         when(quizRepository.save(any(Quiz.class))).thenReturn(new Quiz(testQuizDto));
         QuizDto createdQuiz = quizService.createQuiz(testQuizDto, -1L);

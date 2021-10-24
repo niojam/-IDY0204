@@ -44,7 +44,11 @@ public class QuizService {
     }
 
     public QuizDto createQuiz(QuizDto quizDto, Long userId) {
-       return null; // Mehod to test
+        quizDto.setAuthorId(userId);
+        Quiz quizToSave = quizMapper.toEntity(quizDto);
+        Quiz savedQuiz = quizRepository.save(quizToSave);
+        quizRepository.save(savedQuiz);
+        return quizDto.setId(savedQuiz.getId());
     }
 
     public Quiz getQuiz(Long id) {
