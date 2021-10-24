@@ -183,5 +183,17 @@ public class QuestionServiceTest {
         assertThat(returnedQuestionDto.getId()).isEqualTo(100L);
     }
 
+    @Test
+    public void testEditQuestionNoCorrectAnswer() {
+        assertThrows(BadRequest.class, () -> questionService.editQuestion(
+                new QuestionDto()
+                        .setId(100L)
+                        .setAnswers(List.of(new AnswerDto()
+                                .setId(-1L)
+                                .setText("Something")
+                                .setQuestionId(100L)
+                                .setIsCorrect(false)))));
+    }
+
 
 }
