@@ -56,6 +56,7 @@ public class QuizServiceTest {
         ));
         QuizDto testQuizDto = new QuizDto().setName("megaquiz").setAuthorId(-1L).setQuestions(questionDtos);
         when(quizRepository.save(any(Quiz.class))).thenReturn(new Quiz(testQuizDto));
+        when(questionService.saveQuestions(anyList())).thenReturn(questionDtos);
         QuizDto createdQuiz = quizService.createQuiz(testQuizDto, -1L);
         assertThat(createdQuiz.getName()).isEqualTo(testQuizDto.getName());
         assertThat(createdQuiz.getQuestions().size()).isEqualTo(1);
