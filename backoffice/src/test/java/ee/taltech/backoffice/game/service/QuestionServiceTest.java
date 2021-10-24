@@ -124,5 +124,26 @@ public class QuestionServiceTest {
         assertThrows(BadRequest.class, () -> questionService.saveQuestions(questionDtos));
     }
 
+    @Test
+    public void testSaveQuestionsOnlyOneQuestion() {
+        List<QuestionDto> questionDtos = new ArrayList<>(List.of(
+                new QuestionDto()
+                        .setText("text")
+                        .setTitle("title")
+                        .setAnswers(answerDtoList)
+                        .setQuestionType(QuestionType.SINGLE_MATCH)
+        ));
+        List<Question> questions = new ArrayList<>(List.of(
+                new Question()
+                        .setId(1L)
+                        .setQuizId(1L)
+                        .setText("text")
+                        .setTitle("title")
+                        .setQuestionType(QuestionType.SINGLE_MATCH)));
+        when(questionRepository.saveAll(anyList())).thenReturn(questions);
+        List<QuestionDto> result = questionService.saveQuestions(questionDtos);
+        assertThat(result.size()).isEqualTo(1);
+        assertThat(result.stream().noneMatch(q -> q.getId() == null)).isTrue();
+    }
 
 }
