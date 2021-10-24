@@ -146,4 +146,15 @@ public class QuestionServiceTest {
         assertThat(result.stream().noneMatch(q -> q.getId() == null)).isTrue();
     }
 
+    @Test
+    public void testDeleteQuestions() {
+        List<Question> questions = new ArrayList<>(Collections.singletonList(
+                new Question().setQuizId(-1L).setId(-1L).setText("text")
+        ));
+        when(questionRepository.findByQuizId(-1L)).thenReturn(questions);
+        questionService.deleteQuestions(-1L);
+        verify(questionRepository, times(1))
+                .deleteAll(questions);
+    }
+
 }

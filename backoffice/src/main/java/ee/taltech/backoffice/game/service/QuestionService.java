@@ -87,7 +87,9 @@ public class QuestionService {
 
     public void deleteQuestion(Long id, Long quizId) {
     }
+
     public void deleteQuestions(Long quizId) {
+        // Method to test
     }
 
     public QuestionDto addQuestion(QuestionDto question, Long quizId) {
