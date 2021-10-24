@@ -13,6 +13,7 @@ import ee.taltech.backoffice.game.repository.QuizRepository;
 import ee.taltech.backoffice.game.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,8 +48,16 @@ public class QuizService {
         quizDto.setAuthorId(userId);
         Quiz quizToSave = quizMapper.toEntity(quizDto);
         Quiz savedQuiz = quizRepository.save(quizToSave);
+        if (quizDto.getQuestions() != null) {
+            quizDto.getQuestions().forEach(q -> q.setQuizId(savedQuiz.getId()));
+        }
+        List<QuestionDto> questions = questionService.saveQuestions(quizDto.getQuestions());
+        if (!questions.isEmpty()) {
+            savedQuiz.setFirstQuestionId(questions.get(0).getId());
+            quizDto.setFirstQuestionId(questions.get(0).getId());
+        }
         quizRepository.save(savedQuiz);
-        return quizDto.setId(savedQuiz.getId());
+        return quizDto.setId(savedQuiz.getId()).setQuestions(questions);
     }
 
     public Quiz getQuiz(Long id) {
