@@ -25,5 +25,32 @@ import java.util.List;
 @RequiredArgsConstructor
 public class QuizService {
 
+    private final QuizRepository quizRepository;
+    private final QuizMapper quizMapper = Mappers.getMapper(QuizMapper.class);
+    private final QuestionService questionService;
+    private final RoomRepository roomRepository;
+
+    public QuizDto getQuiz(Long id, Long authorId) {
+        return null;
+
+    }
+
+    public List<QuizDetails> getQuizzes(Long authorId) {
+        return null;
+    }
+
+
+    public void deleteQuiz(Long quizId, Long authorId) {
+    }
+
+    public QuizDto createQuiz(QuizDto quizDto, Long userId) {
+        return null;
+    }
+
+    public Quiz getQuiz(Long id) {
+        return null;
+    }
+
+
 }
 

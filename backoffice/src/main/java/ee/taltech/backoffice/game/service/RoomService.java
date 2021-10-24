@@ -13,4 +13,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RoomService {
 
+    private final RoomRepository roomRepository;
+
+    public List<RoomDto> getAuthorRooms(Long authorId) {
+        return roomRepository.findAuthorRooms(authorId);
+    }
+
+    public void deleteRoom(Long roomId) {
+        Room roomToDelete = roomRepository.findById(roomId)
+                .orElseThrow(() ->
+                        new BadRequest(BadRequest.Code.INVALID_ARGUMENT_EXCEPTION, "Room not found"));
+        roomRepository.delete(roomToDelete);
+    }
+
 }

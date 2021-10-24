@@ -19,4 +19,36 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AnswerService {
 
+    private final AnswerRepository answerRepository;
+
+    private final AnswerMapper answerMapper = Mappers.getMapper(AnswerMapper.class);
+
+    private final QuestionRepository questionRepository;
+
+    public List<AnswerDto> getAnswersForQuestion(Long id) {
+        return null;
+    }
+
+    public void deleteAnswers(Long questionId) {
+
+    }
+
+    public List<AnswerDto> saveAnswers(List<AnswerDto> dtos) {
+        return null;
+    }
+
+    public AnswerDto getAnswer(Long id) {
+        return null;
+    }
+
+    public AnswerDto updateAnswer(AnswerDto answer) {
+        return null;
+    }
+
+    public void deleteAnswer(Long id) {
+    }
+
+    public AnswerDto addAnswer(AnswerDto answer, Long questionId) {
+        return null;
+    }
 }

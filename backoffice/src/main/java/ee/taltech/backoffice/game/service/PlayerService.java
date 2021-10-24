@@ -13,4 +13,19 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class PlayerService {
 
+    private final PlayerRepository playerRepository;
+
+    public PlayerDto getPlayer(long id) {
+        return null;
+
+    }
+
+    public void deletePlayer(long id) {
+    }
+
+    public PlayerDto savePlayer(PlayerDto dto) {
+        return null;
+
+    }
+
 }

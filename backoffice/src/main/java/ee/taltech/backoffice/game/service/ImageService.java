@@ -12,5 +12,17 @@ import static java.lang.String.format;
 @RequiredArgsConstructor
 public class ImageService {
 
+    public final ImageRepository repository;
+
+
+    public Image getImage(Long id) {
+        return null;
+
+    }
+
+    public Image saveImage(String fileName, byte[] content, String contentType) {
+        return null;
+
+    }
 
 }
