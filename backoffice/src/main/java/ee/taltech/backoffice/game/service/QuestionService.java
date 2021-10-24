@@ -81,6 +81,10 @@ public class QuestionService {
     }
 
     public QuestionDto editQuestion(QuestionDto questionDto) {
+        questionRepository.findById(questionDto.getId()).orElseThrow(() ->
+                new BadRequest(BadRequest.Code.BAD_REQUEST_EXCEPTION,
+                        String.format("Question with id %d was not found", questionDto.getId())));
+
         questionRepository.save(questionMapper.toEntity(questionDto));
 
         if (!providedAtLeastOneValidAnswer(questionDto.getAnswers())) {
