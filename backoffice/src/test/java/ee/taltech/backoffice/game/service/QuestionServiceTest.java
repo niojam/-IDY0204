@@ -147,7 +147,7 @@ public class QuestionServiceTest {
     }
 
     @Test
-    public void testDeleteQuestions() {
+    public void testDeleteOneQuestion() {
         List<Question> questions = new ArrayList<>(Collections.singletonList(
                 new Question().setQuizId(-1L).setId(-1L).setText("text")
         ));
