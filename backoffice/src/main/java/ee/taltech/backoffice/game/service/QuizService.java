@@ -13,7 +13,6 @@ import ee.taltech.backoffice.game.repository.QuizRepository;
 import ee.taltech.backoffice.game.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,25 +31,40 @@ public class QuizService {
     private final RoomRepository roomRepository;
 
     public QuizDto getQuiz(Long id, Long authorId) {
-        return null;
-
+        Quiz quiz = quizRepository.findByIdAndAuthorId(id, authorId)
+                .orElseThrow(() -> new BadRequest(BadRequest.Code.BAD_REQUEST_EXCEPTION, "Quiz not found"));
+        return new QuizDto(quiz).setQuestions(questionService.getQuestionsForQuiz(quiz.getId()));
     }
 
     public List<QuizDetails> getQuizzes(Long authorId) {
-        return null;
+        List<QuizDetails> quizDetails = new ArrayList<>();
+        List<Quiz> quizzes = quizRepository.findByAuthor(authorId);
+        quizzes.forEach(quiz -> quizDetails.add(new QuizDetails()
+                .setQuizId(quiz.getId())
+                .setQuizName(quiz.getName())
+                .setImageId(quiz.getImageId())));
+        return quizDetails;
     }
 
 
     public void deleteQuiz(Long quizId, Long authorId) {
+        Quiz quizToDelete = quizRepository.findByIdAndAuthorId(quizId, authorId)
+                .orElseThrow(() -> new BadRequest(BadRequest.Code.INVALID_ARGUMENT_EXCEPTION,
+                        String.format("Quiz with id %d was not found", quizId)));
+        List<Room> rooms = roomRepository.findByQuizId(quizId);
+        if (rooms.stream().allMatch(room -> room.getStatus().equals(RoomStatus.FINISHED)
+                || room.getStatus().equals(RoomStatus.ABORTED))) {
+            quizRepository.delete(quizToDelete);
+        } else {
+            throw new BadRequest(BadRequest.Code.BAD_REQUEST_EXCEPTION, "There are active rooms that use this quiz");
+        }
     }
 
     public QuizDto createQuiz(QuizDto quizDto, Long userId) {
         quizDto.setAuthorId(userId);
         Quiz quizToSave = quizMapper.toEntity(quizDto);
         Quiz savedQuiz = quizRepository.save(quizToSave);
-        if (quizDto.getQuestions() != null) {
-            quizDto.getQuestions().forEach(q -> q.setQuizId(savedQuiz.getId()));
-        }
+        quizDto.getQuestions().forEach(q -> q.setQuizId(savedQuiz.getId()));
         List<QuestionDto> questions = questionService.saveQuestions(quizDto.getQuestions());
         if (!questions.isEmpty()) {
             savedQuiz.setFirstQuestionId(questions.get(0).getId());
@@ -61,9 +75,10 @@ public class QuizService {
     }
 
     public Quiz getQuiz(Long id) {
-        return null;
+        return quizRepository
+                .findById(id)
+                .orElseThrow(() -> new BadRequestException("no quiz found"));
     }
-
 
 }
 

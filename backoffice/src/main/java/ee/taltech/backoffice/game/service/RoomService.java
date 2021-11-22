@@ -25,5 +25,4 @@ public class RoomService {
                         new BadRequest(BadRequest.Code.INVALID_ARGUMENT_EXCEPTION, "Room not found"));
         roomRepository.delete(roomToDelete);
     }
-
 }

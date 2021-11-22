@@ -26,29 +26,47 @@ public class AnswerService {
     private final QuestionRepository questionRepository;
 
     public List<AnswerDto> getAnswersForQuestion(Long id) {
-        return null;
+        return answerMapper.toAnswerDtoList(answerRepository.findByQuestionId(id));
     }
 
     public void deleteAnswers(Long questionId) {
-
+        List<Answer> answers = answerRepository.findByQuestionId(questionId);
+        answerRepository.deleteAll(answers);
     }
 
     public List<AnswerDto> saveAnswers(List<AnswerDto> dtos) {
-        return null;
+        List<Answer> answers = answerMapper.toAnswerList(dtos);
+        return answerMapper.toAnswerDtoList(answerRepository.saveAll(answers));
     }
 
     public AnswerDto getAnswer(Long id) {
-        return null;
+        Answer answer = answerRepository.findById(id).orElseThrow(() ->
+                new BadRequest(BadRequest.Code.BAD_REQUEST_EXCEPTION,
+                        String.format("Answer with id %d was not found", id)));
+        return answerMapper.toDto(answer);
     }
 
     public AnswerDto updateAnswer(AnswerDto answer) {
-        return null;
+        answerRepository.findById(answer.getId()).orElseThrow(() ->
+                new BadRequest(BadRequest.Code.BAD_REQUEST_EXCEPTION,
+                        String.format("Answer with id %d was not found", answer.getId())));
+        answerRepository.save(answerMapper.toEntity(answer));
+        return answer;
     }
 
     public void deleteAnswer(Long id) {
+        Answer answerToDelete = answerRepository.findById(id).orElseThrow(() ->
+                new BadRequest(BadRequest.Code.BAD_REQUEST_EXCEPTION,
+                        String.format("Answer with id %d was not found", id)));
+        answerRepository.delete(answerToDelete);
     }
 
     public AnswerDto addAnswer(AnswerDto answer, Long questionId) {
-        return null;
+        questionRepository.findById(questionId).orElseThrow(() ->
+                new BadRequest(BadRequest.Code.BAD_REQUEST_EXCEPTION,
+                        String.format("Question with id %d was not found", questionId)));
+        answer.setQuestionId(questionId);
+        Answer savedAnswer = answerRepository.save(answerMapper.toEntity(answer));
+        return answer.setId(savedAnswer.getId());
     }
 }

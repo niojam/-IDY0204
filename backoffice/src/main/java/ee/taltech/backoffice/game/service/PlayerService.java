@@ -16,16 +16,18 @@ public class PlayerService {
     private final PlayerRepository playerRepository;
 
     public PlayerDto getPlayer(long id) {
-        return null;
-
+        Player player = playerRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Player was not found"));
+        return new PlayerDto(player);
     }
 
     public void deletePlayer(long id) {
+        Player player = playerRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Player was not found"));
+        playerRepository.delete(player);
     }
 
     public PlayerDto savePlayer(PlayerDto dto) {
-        return null;
-
+        Player player = new Player(dto);
+        playerRepository.save(player);
+        return dto;
     }
-
 }

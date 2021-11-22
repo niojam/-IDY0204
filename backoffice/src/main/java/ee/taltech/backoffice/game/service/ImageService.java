@@ -16,13 +16,17 @@ public class ImageService {
 
 
     public Image getImage(Long id) {
-        return null;
-
+        return repository
+                .findById(id)
+                .orElseThrow(() ->
+                        new BadRequestException(format("No image found with id=%d", id)));
     }
 
     public Image saveImage(String fileName, byte[] content, String contentType) {
-        return null;
-
+        return repository.save(new Image()
+                .setContent(content)
+                .setFileName(fileName)
+                .setContentType(contentType));
     }
 
 }
